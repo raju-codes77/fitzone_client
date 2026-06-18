@@ -3,17 +3,29 @@
 import { useState } from "react";
 import NextLink from "next/link";
 import Image from "next/image";
-import { Button } from "@heroui/react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { FaArrowRight } from "react-icons/fa";
+import { authClient, useSession } from "@/lib/auth-client";
+import { Button } from "@heroui/react";
+import toast from "react-hot-toast";
+import { IoIosLogOut } from "react-icons/io";
 
 const NavbarPage = () => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
+  const { data: session } = useSession();
 
   // Replace with your auth session
-  const user = null;
+  // const {user} = session;
+  console.log(session)
+
+  const handleLogout = async () => {
+    await authClient.signOut();
+    toast.error("logout successful");
+    router.push("/login")
+  }
 
   const navLinks = [
     {
@@ -33,6 +45,7 @@ const NavbarPage = () => {
       href: "/trainers",
     },
   ];
+
 
   return (
     <nav className="sticky top-4 z-50 px-4">
@@ -83,21 +96,88 @@ const NavbarPage = () => {
 
           {/* Desktop Right */}
           <div className="hidden lg:flex items-center gap-3">
-            {!user && (
+            {!session?.user ? (
               <>
                 <Link
                   href="/login"
-                  className="rounded-full active:scale-90 px-5 py-2.5 text-sm font-medium text-zinc-100 transition hover:text-white"
+                  className="rounded-full px-5 py-2.5 text-sm font-medium text-zinc-100 transition hover:text-white active:scale-95"
                 >
                   Login
                 </Link>
 
                 <Link
                   href="/register"
-                  className="rounded-full active:scale-85 bg-lime-400 px-5 py-2.5 text-sm font-semibold text-black transition hover:bg-lime-300"
+                  className="rounded-full bg-lime-400 px-5 py-2.5 text-sm font-semibold text-black transition hover:bg-lime-300 active:scale-95"
                 >
                   Join Now
                 </Link>
+              </>
+            ) : (
+              <>
+                {/* USER INFO */}
+                <div className="flex items-center gap-3 rounded-full bg-white/5 px-3 py-2">
+                  <Image
+                    src={session.user.image || "/avatar.png"}
+                    alt={session.user.name || "User"}
+                    width={40}
+                    height={40}
+                    className="rounded-full border border-lime-400/30 object-cover"
+                  />
+
+                  <div className="leading-tight">
+                    <p className="text-sm font-semibold text-white">
+                      Hello, {session.user.name}
+                    </p>
+
+                    <div className="flex items-center gap-2">
+                      <p className="text-xs text-zinc-400">
+                        {session.user.email}
+                      </p>
+
+                      {/* ROLE BADGE */}
+                      <span className="rounded-full bg-lime-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-lime-400">
+                        {session.user.role || "user"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ROLE BASED BUTTONS */}
+                {session.user.role === "admin" && (
+                  <Link
+                    href="/admin"
+                    className="rounded-full bg-lime-500 px-4 py-2 text-sm font-semibold text-black transition hover:bg-lime-400"
+                  >
+                    Admin
+                  </Link>
+                )}
+
+                {session.user.role === "trainer" && (
+                  <Link
+                    href="/trainer"
+                    className="rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-400"
+                  >
+                    Trainer
+                  </Link>
+                )}
+
+                {session.user.role === "user" && (
+                  <Link
+                    href="/dashboard"
+                    className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20"
+                  >
+                    Dashboard
+                  </Link>
+                )}
+
+                {/* LOGOUT */}
+                <Button
+                  variant="bordered"
+                  className="border-red-500/20 active:scale-75 hover:bg-white/20 text-red-400"
+                  onPress={handleLogout}
+                >
+                  Logout<IoIosLogOut />
+                </Button>
               </>
             )}
           </div>
@@ -139,7 +219,7 @@ const NavbarPage = () => {
           </button>
         </header>
 
-        {/* Mobile Menu */}
+
         {/* Mobile Menu */}
         <div
           className={`
@@ -159,15 +239,15 @@ const NavbarPage = () => {
                   href={item.href}
                   onClick={() => setIsMenuOpen(false)}
                   className={`rounded-xl px-4 py-3 text-sm font-medium transition ${pathname === item.href
-                      ? "bg-lime-500 text-black"
-                      : "text-white hover:bg-white/5"
+                    ? "bg-lime-500 text-black"
+                    : "text-white hover:bg-white/5"
                     }`}
                 >
                   {item.name}
                 </Link>
               ))}
 
-              {!user && (
+              {!session?.user ? (
                 <>
                   <Link
                     href="/login"
@@ -184,6 +264,76 @@ const NavbarPage = () => {
                   >
                     Join Now
                   </Link>
+                </>
+              ) : (
+                <>
+                  {/* USER CARD */}
+                  <div className="mt-3 flex items-center gap-3 rounded-xl bg-white/5 px-4 py-3">
+                    <Image
+                      src={session.user.image || "/default-avatar.png"}
+                      alt={session.user.name || "User"}
+                      width={40}
+                      height={40}
+                      className="rounded-full border border-lime-400/30 object-cover"
+                    />
+
+                    <div className="flex flex-col">
+                      <span className="text-sm font-semibold text-white">
+                        {session.user.name}
+                      </span>
+
+                      <span className="text-xs text-zinc-400">
+                        {session.user.email}
+                      </span>
+
+                      {/* 🔥 ROLE BADGE */}
+                      <span className="mt-1 w-fit rounded-full bg-lime-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-lime-400">
+                        {session.user.role || "user"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* DASHBOARD (ROLE BASED) */}
+                  {session.user.role === "admin" && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="rounded-xl bg-lime-500 px-4 py-3 text-center text-sm font-semibold text-black transition hover:bg-lime-400"
+                    >
+                      Admin Dashboard
+                    </Link>
+                  )}
+
+                  {session.user.role === "trainer" && (
+                    <Link
+                      href="/trainer"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="rounded-xl bg-blue-500 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-400"
+                    >
+                      Trainer Panel
+                    </Link>
+                  )}
+
+                  {session.user.role === "user" && (
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="rounded-xl bg-white/10 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/20"
+                    >
+                      My Dashboard
+                    </Link>
+                  )}
+
+                  {/* LOGOUT */}
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsMenuOpen(false);
+                    }}
+                    className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600 transition hover:bg-red-500/20 flex gap-1 justify-center items-center"
+                  >
+                    Logout<IoIosLogOut />
+                  </button>
                 </>
               )}
             </div>
