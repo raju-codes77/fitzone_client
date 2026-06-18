@@ -5,6 +5,8 @@ import NextLink from "next/link";
 import Image from "next/image";
 import { Button } from "@heroui/react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { FaArrowRight } from "react-icons/fa";
 
 const NavbarPage = () => {
   const pathname = usePathname();
@@ -56,7 +58,7 @@ const NavbarPage = () => {
                 FitZone
               </h1>
 
-              <p className="text-[10px] uppercase tracking-[0.25em] text-zinc-400">
+              <p className="text-[10px] uppercase tracking-[0.25em] text-lime-400">
                 Train • Track • Transform
               </p>
             </div>
@@ -68,11 +70,10 @@ const NavbarPage = () => {
               <li key={item.href}>
                 <NextLink
                   href={item.href}
-                  className={`rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300 ${
-                    pathname === item.href
-                      ? "bg-lime-500 text-black shadow-lg shadow-lime-500/30"
-                      : "text-zinc-300 hover:bg-white/5 hover:text-white"
-                  }`}
+                  className={`rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300 ${pathname === item.href
+                    ? "bg-lime-500 text-black shadow-lg shadow-lime-500/30"
+                    : "text-zinc-300 hover:bg-white/5 hover:text-white"
+                    }`}
                 >
                   {item.name}
                 </NextLink>
@@ -81,46 +82,24 @@ const NavbarPage = () => {
           </ul>
 
           {/* Desktop Right */}
-          <div className="hidden items-center gap-3 lg:flex">
-            {!user ? (
+          <div className="hidden lg:flex items-center gap-3">
+            {!user && (
               <>
-                <Button
-                  as={NextLink}
+                <Link
                   href="/login"
-                  variant="bordered"
-                  radius="full"
-                  className="border-white/15 bg-white/5 text-white backdrop-blur-xl"
+                  className="rounded-full active:scale-90 px-5 py-2.5 text-sm font-medium text-zinc-100 transition hover:text-white"
                 >
                   Login
-                </Button>
+                </Link>
 
-                <Button
-                  as={NextLink}
+                <Link
                   href="/register"
-                  radius="full"
-                  className="bg-gradient-to-r from-lime-400 to-lime-500 font-bold text-black shadow-lg shadow-lime-500/30"
+                  className="rounded-full active:scale-85 bg-lime-400 px-5 py-2.5 text-sm font-semibold text-black transition hover:bg-lime-300"
                 >
                   Join Now
-                </Button>
+                </Link>
               </>
-            ) : (
-              <div className="flex items-center gap-3">
-                <div className="hidden text-right xl:block">
-                  <h4 className="text-sm font-semibold text-white">
-                    John Doe
-                  </h4>
-                  <p className="text-xs text-zinc-400">
-                    Premium Member
-                  </p>
-                </div>
-
-                <div className="flex h-11 w-11 items-center justify-center rounded-full border border-lime-500/30 bg-lime-500 font-semibold text-black">
-                  J
-                </div>
-              </div>
             )}
-
-            {/* Mobile Toggle */}
           </div>
 
           <button
@@ -161,55 +140,58 @@ const NavbarPage = () => {
         </header>
 
         {/* Mobile Menu */}
+        {/* Mobile Menu */}
         <div
-          className={`overflow-hidden transition-all duration-300 lg:hidden ${
-            isMenuOpen
+          className={`
+    lg:hidden overflow-hidden
+    transition-all duration-500 ease-in-out
+    ${isMenuOpen
               ? "max-h-[500px] opacity-100"
               : "max-h-0 opacity-0"
-          }`}
+            }
+  `}
         >
           <div className="border-t border-white/10 px-5 py-5">
-            <ul className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2">
               {navLinks.map((item) => (
-                <li key={item.href}>
-                  <NextLink
-                    href={item.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`block rounded-2xl px-4 py-3 text-sm font-medium transition-all ${
-                      pathname === item.href
-                        ? "bg-lime-500 text-black"
-                        : "text-white hover:bg-white/5"
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`rounded-xl px-4 py-3 text-sm font-medium transition ${pathname === item.href
+                      ? "bg-lime-500 text-black"
+                      : "text-white hover:bg-white/5"
                     }`}
-                  >
-                    {item.name}
-                  </NextLink>
-                </li>
+                >
+                  {item.name}
+                </Link>
               ))}
-            </ul>
 
-            {!user && (
-              <div className="mt-5 flex flex-col gap-3">
-                <Button
-                  as={NextLink}
-                  href="/login"
-                  variant="bordered"
-                  className="border-white/15 bg-white/5 text-white"
-                >
-                  Login
-                </Button>
+              {!user && (
+                <>
+                  <Link
+                    href="/login"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="mt-3 rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-center text-white transition hover:bg-white/10"
+                  >
+                    Login
+                  </Link>
 
-                <Button
-                  as={NextLink}
-                  href="/register"
-                  className="bg-gradient-to-r from-lime-400 to-lime-500 font-bold text-black"
-                >
-                  Join Now
-                </Button>
-              </div>
-            )}
+                  <Link
+                    href="/register"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="rounded-xl bg-lime-400 px-4 py-3 text-center font-semibold text-black transition hover:bg-lime-300"
+                  >
+                    Join Now
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
         </div>
+
       </div>
+
     </nav>
   );
 };
