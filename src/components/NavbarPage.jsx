@@ -17,9 +17,9 @@ const NavbarPage = () => {
   const router = useRouter();
   const { data: session } = useSession();
 
-  // Replace with your auth session
-  // const {user} = session;
-  console.log(session)
+  if(pathname.includes('dashboard')){
+    return null;
+  }
 
   const handleLogout = async () => {
     await authClient.signOut();
@@ -145,25 +145,25 @@ const NavbarPage = () => {
                 {/* ROLE BASED BUTTONS */}
                 {session.user.role === "admin" && (
                   <Link
-                    href="/admin"
+                    href="/dashboard/admin"
                     className="rounded-full bg-lime-500 px-4 py-2 text-sm font-semibold text-black transition hover:bg-lime-400"
                   >
-                    Admin
+                    Dashboard
                   </Link>
                 )}
 
                 {session.user.role === "trainer" && (
                   <Link
-                    href="/trainer"
+                    href="/dashboard/trainer"
                     className="rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-400"
                   >
-                    Trainer
+                    Dashboard
                   </Link>
                 )}
 
                 {session.user.role === "user" && (
                   <Link
-                    href="/dashboard"
+                    href="/dashboard/user"
                     className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20"
                   >
                     Dashboard
@@ -294,9 +294,9 @@ const NavbarPage = () => {
                   </div>
 
                   {/* DASHBOARD (ROLE BASED) */}
-                  {session.user.role === "admin" && (
+                    {session.user.role === "admin" && (
                     <Link
-                      href="/admin"
+                      href="/dashboard/admin"
                       onClick={() => setIsMenuOpen(false)}
                       className="rounded-xl bg-lime-500 px-4 py-3 text-center text-sm font-semibold text-black transition hover:bg-lime-400"
                     >
@@ -306,7 +306,7 @@ const NavbarPage = () => {
 
                   {session.user.role === "trainer" && (
                     <Link
-                      href="/trainer"
+                      href="/dashboard/trainer"
                       onClick={() => setIsMenuOpen(false)}
                       className="rounded-xl bg-blue-500 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-400"
                     >
@@ -316,7 +316,7 @@ const NavbarPage = () => {
 
                   {session.user.role === "user" && (
                     <Link
-                      href="/dashboard"
+                      href="/dashboard/user"
                       onClick={() => setIsMenuOpen(false)}
                       className="rounded-xl bg-white/10 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/20"
                     >
@@ -324,6 +324,7 @@ const NavbarPage = () => {
                     </Link>
                   )}
 
+                
                   {/* LOGOUT */}
                   <button
                     onClick={() => {

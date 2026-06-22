@@ -5,8 +5,16 @@ import Link from "next/link";
 import { Button } from "@heroui/react";
 
 import { MapPin, Phone, Mail, Dumbbell } from "lucide-react";
+import { useSession } from "@/lib/auth-client";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
+      const pathname = usePathname();
+  
+    if(pathname.includes('dashboard')){
+      return null;
+    }
+  
   return (
     <footer className="relative w-full text-white bg-black/90 border-t border-white/10 backdrop-blur-xl">
 

@@ -8,10 +8,12 @@ import { FcGoogle } from "react-icons/fc";
 import { useForm, Controller } from "react-hook-form";
 import { authClient, signIn } from "@/lib/auth-client";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const router=useRouter();
 
   const {
     control,
@@ -42,9 +44,12 @@ export default function LoginPage() {
       toast.error(result.error.message);
       setLoading(false);
       return;
+    }else{
+        toast.success("Login successful!");
+        router.push("/")
     }
 
-    toast.success("Login successful!");
+   
 
     reset();
     setLoading(false);
