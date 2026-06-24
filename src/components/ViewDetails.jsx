@@ -1,9 +1,9 @@
 import Image from 'next/image';
 import React, { useState } from 'react';
 
-const ViewDetails = ({viewClass}) => {
-       const [isFavorite, setIsFavorite] = useState(false);
-       const handleBooking = () => {
+const ViewDetails = ({ viewClass }) => {
+  const [isFavorite, setIsFavorite] = useState(false);
+  const handleBooking = () => {
     // Implement your booking logic / API request here
     alert(`Successfully booked: ${viewClass?.className}`);
   };
@@ -13,23 +13,23 @@ const ViewDetails = ({viewClass}) => {
     setIsFavorite(!isFavorite);
     alert(isFavorite ? "Removed from favorites" : "Added to favorites!");
   };
-       return (
-             <div className="p-6 max-w-5xl mx-auto min-h-screen bg-slate-950 text-slate-100">
-      
+  return (
+    <div className="p-6 max-w-5xl mx-auto min-h-screen bg-slate-950 text-slate-100 flex items-center">
+
       {/* Back Layout Layout Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden p-6 shadow-2xl">
-        
+
         {/* Left Column: Visual Asset Display */}
         <div className="relative h-72 lg:h-full min-h-[320px] w-full rounded-xl overflow-hidden bg-slate-950 border border-slate-800">
           {viewClass?.imageUrl && (
-              <Image
-            src={viewClass?.imageUrl} 
-            alt={viewClass?.className}
-            fill
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-cover"
-            priority
-          />
+            <Image
+              src={viewClass?.imageUrl}
+              alt={viewClass?.className}
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
+              priority
+            />
           )}
           <div className="absolute top-4 left-4 bg-indigo-600 px-3 py-1 rounded-md text-xs font-semibold shadow-md">
             {viewClass?.category}
@@ -77,8 +77,8 @@ const ViewDetails = ({viewClass}) => {
             <div className="space-y-2">
               <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Course Overview Description</h3>
               <p className="text-sm text-slate-300 leading-relaxed">
-                {viewClass?.description && viewClass?.description !== 'none' 
-                  ? viewClass?.description 
+                {viewClass?.description && viewClass?.description !== 'none'
+                  ? viewClass?.description
                   : 'No custom blueprint summary provided. This training module features state-of-the-art structural mechanics designed to build baseline capabilities and expand individual athletic limits under specialized operational oversight.'}
               </p>
             </div>
@@ -87,25 +87,26 @@ const ViewDetails = ({viewClass}) => {
           {/* Core Action Callouts */}
           <div className="pt-4 border-t border-slate-800/80 flex flex-col sm:flex-row gap-3">
             {/* Book Now Action Trigger */}
-             <form action="/api/checkout_sessions" method="POST">
-      <button 
-             
-              className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white text-center py-3 rounded-xl font-bold text-sm tracking-wide shadow-lg transition-colors cursor-pointer"
-            >
-              Book Session Now
-            </button>
-    </form>
-           
+            <form action="/api/checkout_sessions" method="POST">
+  <section className="w-full">
+    <button
+      type="submit"
+      className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 px-6 rounded-xl font-bold text-sm tracking-wide shadow-lg transition-all duration-200 cursor-pointer"
+    >
+      Book Session Now
+    </button>
+  </section>
+</form>
+
 
             {/* Add to Favorites Toggle */}
-            
-            <button 
+
+            <button
               onClick={handleFavoriteToggle}
-              className={`px-4 py-3 rounded-xl border font-semibold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                isFavorite 
-                  ? 'bg-rose-950/40 border-rose-800 text-rose-400 shadow-inner' 
+              className={`px-4 py-3 rounded-xl border font-semibold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${isFavorite
+                  ? 'bg-rose-950/40 border-rose-800 text-rose-400 shadow-inner'
                   : 'bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-800 hover:border-slate-700'
-              }`}
+                }`}
             >
               <span>{isFavorite ? '❤️' : '🤍'}</span>
               <span className="sm:hidden lg:inline">
@@ -118,7 +119,7 @@ const ViewDetails = ({viewClass}) => {
       </div>
 
     </div>
-       );
+  );
 };
 
 export default ViewDetails;

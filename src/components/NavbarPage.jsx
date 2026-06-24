@@ -40,10 +40,7 @@ const NavbarPage = () => {
       name: "Community",
       href: "/forum",
     },
-    {
-      name: "Trainers",
-      href: "/trainers",
-    },
+    
   ];
 
 
