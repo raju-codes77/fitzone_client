@@ -1,4 +1,5 @@
 import Banners from "@/components/Banners";
+import BecomeTrainerSection from "@/components/BecomeTrainerSection";
 import Feature from "@/components/Feature";
 import FeaturedClasses from "@/components/FeaturedClasses";
 import LatestForums from "@/components/LatestForums";
@@ -10,6 +11,7 @@ export default function Home() {
       <Banners></Banners>
       <FeaturedClasses/>
       <LatestForums/>
+      <BecomeTrainerSection/>
       <Feature></Feature>
 
     </div>
