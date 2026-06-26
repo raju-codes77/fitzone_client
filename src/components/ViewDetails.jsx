@@ -1,10 +1,11 @@
+import { getFavorites, toggleFavorite } from '@/lib/actions/favorites';
 import { userBookedClasses } from '@/lib/api/payment';
 import { useSession } from '@/lib/auth-client';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
 const ViewDetails =({ viewClass }) => {
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [favorites, setFavorites] = useState([]);
  
     const { data: session } = useSession();
 
@@ -25,14 +26,70 @@ useEffect(() => {
 
 }, [userId]);
 
-const isBooked=bookedClasses.find(item=>item.productId===viewClass?._id);
-  
+useEffect(() => {
 
-  const handleFavoriteToggle = () => {
-    // Implement your wishlist/favorites API interaction here
-    setIsFavorite(!isFavorite);
-    alert(isFavorite ? "Removed from favorites" : "Added to favorites!");
+  if(userId){
+
+    getFavorites(userId)
+      .then(data => {
+        setFavorites(data);
+      });
+
+  }
+
+}, [userId]);
+
+const isBooked = bookedClasses.find(
+  item =>
+    String(item.productId) ===
+    String(viewClass?._id)
+);
+
+const isFavorite = favorites.find(
+  item =>
+    String(item.classId) ===
+    String(viewClass?._id)
+);
+  
+const handleFavoriteToggle = async () => {
+
+  const favoriteData = {
+    userId,
+    classId: viewClass?._id,
   };
+
+  const data =
+    await toggleFavorite(favoriteData);
+
+  // remove from UI
+
+  if(!data.favorite){
+
+    const remainingFavorites =
+      favorites.filter(
+        item =>
+          String(item.classId) !==
+          String(viewClass?._id)
+      );
+
+    setFavorites(remainingFavorites);
+
+  }
+
+  // add to UI
+
+  else {
+
+    setFavorites([
+      ...favorites,
+      {
+        classId: viewClass?._id,
+      },
+    ]);
+
+  }
+
+};
   return (
     <div className="p-6 max-w-5xl mx-auto min-h-screen bg-slate-950 text-slate-100 flex items-center">
 
