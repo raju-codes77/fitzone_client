@@ -88,15 +88,18 @@ const ViewDetails = ({ viewClass }) => {
           <div className="pt-4 border-t border-slate-800/80 flex flex-col sm:flex-row gap-3">
             {/* Book Now Action Trigger */}
             <form action="/api/checkout_sessions" method="POST">
-  <section className="w-full">
-    <button
-      type="submit"
-      className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 px-6 rounded-xl font-bold text-sm tracking-wide shadow-lg transition-all duration-200 cursor-pointer"
-    >
-      Book Session Now
-    </button>
-  </section>
-</form>
+              <input type="hidden" name="price" value={viewClass?.price ?? ''} />
+              <input type="hidden" name="title" value={viewClass?.className ?? ''} />
+              <input type="hidden" name="productId" value={viewClass?._id ?? ''} />
+              <section className="w-full">
+                <button
+                  type="submit"
+                  className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 px-6 rounded-xl font-bold text-sm tracking-wide shadow-lg transition-all duration-200 cursor-pointer"
+                >
+                  Book Session Now
+                </button>
+              </section>
+            </form>
 
 
             {/* Add to Favorites Toggle */}
@@ -104,8 +107,8 @@ const ViewDetails = ({ viewClass }) => {
             <button
               onClick={handleFavoriteToggle}
               className={`px-4 py-3 rounded-xl border font-semibold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${isFavorite
-                  ? 'bg-rose-950/40 border-rose-800 text-rose-400 shadow-inner'
-                  : 'bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-800 hover:border-slate-700'
+                ? 'bg-rose-950/40 border-rose-800 text-rose-400 shadow-inner'
+                : 'bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-800 hover:border-slate-700'
                 }`}
             >
               <span>{isFavorite ? '❤️' : '🤍'}</span>

@@ -6,6 +6,7 @@ import { FaUsers, FaBookOpen, FaClipboardList, FaUserShield, FaArrowUp, FaChartL
 // Import client-side charts dynamically or assume they handle client boundary internally
 import { AdminCharts } from "./components/AdminCharts"; 
 import { getClasses } from "@/lib/api/classes";
+import { getUsers } from "@/lib/api/users";
 
 export default async function AdminOverviewPage() {
   const session = await auth.api.getSession({
@@ -13,11 +14,14 @@ export default async function AdminOverviewPage() {
   });
 
   const user = session?.user;
+  const usersData=await getUsers();
   const allClasses=await getClasses();
+
+  const allUsers=usersData.filter(user=>user.role==="user");
 
   // Modern structured analytics data
   const stats = {
-    totalUsers: { value: "1,240", change: "+12% this month", icon: FaUsers, color: "text-cyan-400", bg: "bg-cyan-500/10", border: "hover:border-cyan-500/30" },
+    totalUsers: { value: allUsers.length, change: "+12% this month", icon: FaUsers, color: "text-cyan-400", bg: "bg-cyan-500/10", border: "hover:border-cyan-500/30" },
     totalClasses: { value: allClasses.length, change: "+4% this month", icon: FaBookOpen, color: "text-purple-400", bg: "bg-purple-500/10", border: "hover:border-purple-500/30" },
     totalBookedClasses: { value: "532", change: "+18% this month", icon: FaClipboardList, color: "text-emerald-400", bg: "bg-emerald-500/10", border: "hover:border-emerald-500/30" },
   };
@@ -72,7 +76,7 @@ export default async function AdminOverviewPage() {
 
       {/* Analytics Charts Component (Modular Client Component) */}
       <div className="mb-8">
-        <AdminCharts />
+        <AdminCharts users={allUsers} />
       </div>
 
       {/* Admin Profile & Overview Details */}

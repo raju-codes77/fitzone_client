@@ -1,5 +1,6 @@
 "use client";
 
+import { getUsers } from "@/lib/api/users";
 import { useState } from "react";
 import {
   FaUserShield,
@@ -7,29 +8,10 @@ import {
   FaLockOpen,
 } from "react-icons/fa";
 
-const initialUsers = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john@example.com",
-    role: "user",
-    status: "active",
-  },
-  {
-    id: 2,
-    name: "Sarah Smith",
-    email: "sarah@example.com",
-    role: "trainer",
-    status: "blocked",
-  },
-  {
-    id: 3,
-    name: "Alex Johnson",
-    email: "alex@example.com",
-    role: "user",
-    status: "active",
-  },
-];
+const  users=await getUsers();
+const allUsers=users.filter(user=>user.role==="user");
+
+const initialUsers =allUsers;
 
 export default function AdminManageUsers() {
 
@@ -132,7 +114,7 @@ export default function AdminManageUsers() {
             {users.map((user) => (
 
               <tr
-                key={user.id}
+                key={user._id}
                 className="border-b border-zinc-800 transition-all hover:bg-zinc-800/40"
               >
 

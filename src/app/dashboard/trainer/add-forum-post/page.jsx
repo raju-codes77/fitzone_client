@@ -2,13 +2,14 @@
 
 import { createForums } from '@/lib/actions/forums';
 import React, { useState } from 'react';
+import toast from "react-hot-toast";
 
 const CreateForumPostPage = () => {
   // Controlled form input states
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [imageFile, setImageFile] = useState(null);
-  
+
   // Operational management states
   const [isUploading, setIsUploading] = useState(false);
   const [submitStatus, setSubmitStatus] = useState('idle'); // 'idle' | 'success' | 'error'
@@ -41,7 +42,7 @@ const CreateForumPostPage = () => {
 
       // 2. Dispatch upload to Imgbb (Using standard v1 upload endpoint)
       // NOTE: Replace 'YOUR_IMGBB_API_KEY' with your real Imgbb token
-      const imgbbApiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY; 
+      const imgbbApiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
       const imgbbResponse = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbApiKey}`, {
         method: 'POST',
         body: formData,
@@ -55,7 +56,7 @@ const CreateForumPostPage = () => {
 
       // 3. Extract the hosted permanent link
       const permanentImageUrl = imgbbData.data.url;
-      
+
       // 4. Build final community payload structure
       const finalPostPayload = {
         title,
@@ -63,11 +64,22 @@ const CreateForumPostPage = () => {
         imageUrl: permanentImageUrl,
         timestamp: new Date().toISOString(),
       };
+      const baseUrl=process.env.NEXT_PUBLIC_BASE_URL;
+      const response = await fetch(`${baseUrl}/forums`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(finalPostPayload),
+      });
 
-      const res=await createForums(finalPostPayload);
-          if(res.insertedID){
-             toast.success("Class added Successfully!")
-          }      
+      const data = await response.json();
+
+      console.log(data);
+
+      if (data.insertedId) {
+        toast.success("Forum added Successfully!");
+      }
       // In production, sync with your platform endpoint database route here:
       // await fetch('/api/forum/create', { method: 'POST', body: JSON.stringify(finalPostPayload) });
 
@@ -76,7 +88,7 @@ const CreateForumPostPage = () => {
       setDescription('');
       setImageFile(null);
       e.target.reset(); // Clear file input field layout visual
-      
+
     } catch (err) {
       console.error(err);
       setSubmitStatus('error');
@@ -88,7 +100,7 @@ const CreateForumPostPage = () => {
 
   return (
     <div className="p-6 max-w-2xl mx-auto min-h-screen bg-slate-950 text-slate-100">
-      
+
       {/* Module Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-slate-50">New Community Forum Post</h1>
@@ -96,7 +108,7 @@ const CreateForumPostPage = () => {
       </div>
 
       <form onSubmit={handlePostSubmit} className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-5">
-        
+
         {/* Status Alerts Notification Blocks */}
         {errorMessage && (
           <div className="bg-rose-950/40 border border-rose-900/60 rounded-lg p-3 text-sm text-rose-400">
