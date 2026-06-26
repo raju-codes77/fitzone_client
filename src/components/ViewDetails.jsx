@@ -1,12 +1,32 @@
+import { userBookedClasses } from '@/lib/api/payment';
+import { useSession } from '@/lib/auth-client';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-const ViewDetails = ({ viewClass }) => {
+const ViewDetails =({ viewClass }) => {
   const [isFavorite, setIsFavorite] = useState(false);
-  const handleBooking = () => {
-    // Implement your booking logic / API request here
-    alert(`Successfully booked: ${viewClass?.className}`);
-  };
+ 
+    const { data: session } = useSession();
+
+const userId = session?.user?.id;
+
+const [bookedClasses, setBookedClasses] = useState([]);
+
+useEffect(() => {
+
+  if(userId){
+
+    userBookedClasses(userId)
+      .then(data => {
+        setBookedClasses(data);
+      });
+
+  }
+
+}, [userId]);
+
+const isBooked=bookedClasses.find(item=>item.productId===viewClass?._id);
+  
 
   const handleFavoriteToggle = () => {
     // Implement your wishlist/favorites API interaction here
@@ -87,7 +107,15 @@ const ViewDetails = ({ viewClass }) => {
           {/* Core Action Callouts */}
           <div className="pt-4 border-t border-slate-800/80 flex flex-col sm:flex-row gap-3">
             {/* Book Now Action Trigger */}
-            <form action="/api/checkout_sessions" method="POST">
+            {isBooked?(
+               <button
+                  type="submit"
+                  className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 px-6 rounded-xl font-bold text-sm tracking-wide shadow-lg transition-all duration-200 cursor-pointer"
+                >
+                  Already Booked
+                </button>
+            ):(
+                 <form action="/api/checkout_sessions" method="POST">
               <input type="hidden" name="price" value={viewClass?.price ?? ''} />
               <input type="hidden" name="title" value={viewClass?.className ?? ''} />
               <input type="hidden" name="productId" value={viewClass?._id ?? ''} />
@@ -100,6 +128,8 @@ const ViewDetails = ({ viewClass }) => {
                 </button>
               </section>
             </form>
+            )}
+           
 
 
             {/* Add to Favorites Toggle */}

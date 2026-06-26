@@ -1,25 +1,43 @@
 "use client";
 
-import React, { useState } from 'react';
+import { userBookedClasses } from '@/lib/api/payment';
+import { useSession } from '@/lib/auth-client';
+import React, { useEffect, useState } from 'react';
 
 // Mock profile data mimicking a standard database response
-const MOCK_USER_DATA = {
-  name: "Sarah Jenkins",
-  email: "sarah.j@example.com",
-  avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop",
-  role: "User",
-  stats: {
-    totalBookedClasses: 14,
-    totalFavorites: 8
-  },
-  trainerApplication: {
-    status: "Rejected", // Can be "Pending", "Approved", or "Rejected"
-    adminFeedback: "Thank you for applying! Unfortunately, we require a minimum of 2 years of active fitness certification for our professional tier. Please update your credentials and feel free to reapply."
-  }
-};
+
 
 const UserDashboard = () => {
-  const [userData] = useState(MOCK_USER_DATA);
+ 
+
+  const { data: session } = useSession();
+  
+    const userId = session?.user?.id;
+    const userName=session?.user?.name;
+    const userEmail=session?.user?.email;
+    const userRole=session?.user?.role;
+    const userAvatarUrl=session?.user?.image;
+    const [userFavorites, setUserFavorites] = useState(0);
+  
+    const [bookedClasses, setBookedClasses] = useState([]);
+  
+  const [status, setStatus] = useState('Approved');
+  const [adminFeedback, setAdminFeedback] = useState('');
+  
+    // fetch booked classes
+  
+    useEffect(() => {
+  
+      if (userId) {
+  
+        userBookedClasses(userId)
+          .then((data) => {
+            setBookedClasses(data);
+          });
+  
+      }
+  
+    }, [userId]);
 
   // Helper logic to style application badges dynamically
   const getStatusStyles = (status) => {
@@ -38,7 +56,7 @@ const UserDashboard = () => {
       
       {/* Header Grid */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-50">Welcome Back, {userData.name.split(' ')[0]}</h1>
+        <h1 className="text-2xl font-bold text-slate-50">Welcome Back, {userName}</h1>
         <p className="text-sm text-slate-400">Manage your profile, statistics, and application milestones.</p>
       </div>
 
@@ -48,7 +66,7 @@ const UserDashboard = () => {
         <div className="bg-slate-900 p-5 rounded-xl border border-slate-800 shadow-lg flex items-center justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Booked Classes</p>
-            <p className="text-3xl font-bold text-slate-50 mt-1">{userData.stats.totalBookedClasses}</p>
+            <p className="text-3xl font-bold text-slate-50 mt-1">{bookedClasses.length}</p>
           </div>
           <div className="p-3 bg-indigo-950/50 border border-indigo-900/40 rounded-lg text-indigo-400">
             {/* Simple Inline SVG Calendar Icon */}
@@ -60,7 +78,7 @@ const UserDashboard = () => {
         <div className="bg-slate-900 p-5 rounded-xl border border-slate-800 shadow-lg flex items-center justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Favorites</p>
-            <p className="text-3xl font-bold text-slate-50 mt-1">{userData.stats.totalFavorites}</p>
+            <p className="text-3xl font-bold text-slate-50 mt-1">{userFavorites}</p>
           </div>
           <div className="p-3 bg-rose-950/40 border border-rose-900/40 rounded-lg text-rose-400">
             {/* Simple Inline SVG Heart Icon */}
@@ -73,18 +91,19 @@ const UserDashboard = () => {
         {/* Profile Card details */}
         <div className="md:col-span-1 bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-lg flex flex-col items-center text-center">
           <img 
-            src={userData.avatarUrl} 
-            alt={userData.name} 
+            src={userAvatarUrl} 
+            alt={userName}
+            
             className="w-24 height-24 rounded-full border-2 border-indigo-500 shadow-inner object-cover mb-4"
           />
           <div className="flex items-center gap-2 mb-1">
-            <h2 className="text-lg font-bold text-slate-50">{userData.name}</h2>
+            <h2 className="text-lg font-bold text-slate-50">{userName}</h2>
             {/* User Role Badge */}
             <span className="inline-flex items-center rounded-md bg-indigo-950/80 px-2 py-0.5 text-xs font-semibold text-indigo-300 border border-indigo-800/60">
-              {userData.role}
+              {userRole}
             </span>
           </div>
-          <p className="text-sm text-slate-400 font-normal">{userData.email}</p>
+          <p className="text-sm text-slate-400 font-normal">{ userEmail}</p>
         </div>
 
         {/* Application Status Alert Block */}
@@ -92,22 +111,22 @@ const UserDashboard = () => {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-bold text-slate-50">Trainer Application Status</h3>
-              <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${getStatusStyles(userData.trainerApplication.status)}`}>
-                {userData.trainerApplication.status}
+              <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${getStatusStyles(status)}`}>
+                { status}
               </span>
             </div>
 
             {/* Conditionally display Admin Feedback if Application is Rejected */}
-            {userData.trainerApplication.status === "Rejected" ? (
+            {status === "Rejected" ? (
               <div className="bg-slate-950 border border-slate-800 p-4 rounded-lg mt-2">
                 <div className="text-xs font-bold text-rose-400 uppercase tracking-wider mb-1">Admin Feedback</div>
                 <p className="text-sm text-slate-300 leading-relaxed">
-                  "{userData.trainerApplication.adminFeedback}"
+                  {adminFeedback}
                 </p>
               </div>
             ) : (
               <p className="text-sm text-slate-400 leading-relaxed">
-                {userData.trainerApplication.status === "Pending" 
+                {status === "Pending"
                   ? "Your request to become an official platform trainer is currently being scrutinized by an administrator. We typically reply within 48 hours."
                   : "Congratulations! Your trainer parameters have successfully cleared."
                 }
