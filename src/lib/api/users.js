@@ -52,17 +52,19 @@ export const promoteUser = async (id) => {
 
   return res.json();
 };
-//user block
+
+// Block user
 export const blockUser = async (id) => {
+
   const res = await fetch(
-    `${baseUrl}/users/${id}`,
+    `${baseUrl}/users/block/${id}`,
     {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        isBlocked: true,
+        blocked: true,
       }),
     }
   );
@@ -70,17 +72,19 @@ export const blockUser = async (id) => {
   return res.json();
 };
 
-//user unblock
+
+// Unblock user
 export const unblockUser = async (id) => {
+
   const res = await fetch(
-    `${baseUrl}/users/${id}`,
+    `${baseUrl}/users/block/${id}`,
     {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        isBlocked: false,
+        blocked: false,
       }),
     }
   );
