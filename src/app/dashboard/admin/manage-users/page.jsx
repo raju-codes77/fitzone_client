@@ -8,6 +8,7 @@ import {
 } from "@/lib/api/users";
 
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 import {
   FaUserShield,
@@ -34,6 +35,7 @@ export default function AdminManageUsers() {
         );
 
         setUsers(allUsers);
+        
 
       } catch (error) {
 
@@ -58,10 +60,12 @@ export default function AdminManageUsers() {
       if (user.blocked) {
 
         await unblockUser(user._id);
+        toast.success("User unblocked successfully");
 
       } else {
 
         await blockUser(user._id);
+        toast.error("User blocked successfully");
 
       }
 
@@ -90,6 +94,7 @@ export default function AdminManageUsers() {
     try {
 
       await promoteUser(user._id);
+      toast.success("User promoted to admin successfully");
 
       // Remove from user list instantly
       setUsers((prev) =>
