@@ -1,59 +1,81 @@
 "use client";
 
-import { useState } from "react";
+import { demoteTrainer, getUsers } from "@/lib/api/users";
+import React, { useEffect, useState } from "react";
 
 export default function AdminManageTrainers() {
-  // demo data (replace with API later)
-  const [trainers, setTrainers] = useState([
-    {
-      id: "1",
-      name: "John Doe",
-      email: "john@mail.com",
-      specialty: "Strength Training",
-    },
-    {
-      id: "2",
-      name: "Sarah Khan",
-      email: "sarah@mail.com",
-      specialty: "Yoga",
-    },
-  ]);
 
-  // demote handler
-  const handleDemote = (trainer) => {
-    const confirm = window.confirm(
-      `Are you sure you want to demote ${trainer.name} to User?`
-    );
+  const [trainers, setTrainers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    if (!confirm) return;
+  // Fetch trainers
+  useEffect(() => {
+    const fetchTrainers = async () => {
+      try {
+        const users = await getUsers();
 
-    // remove from trainer list (UI update)
-    setTrainers((prev) =>
-      prev.filter((t) => t.id !== trainer.id)
-    );
+        const allUsers = users.filter(
+          (user) => user.role === "trainer"
+        );
 
-    // TODO: API call here
-    // await fetch("/api/admin/demote-trainer", { method: "POST", body: JSON.stringify(trainer.id) });
+        setTrainers(allUsers);
+
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTrainers();
+  }, []);
+
+  // Demote handler
+  const handleDemote = async (trainer) => {
+
+    try {
+      await demoteTrainer(trainer._id);
+
+      // Update UI instantly
+      setTrainers((prev) =>
+        prev.filter((t) => t._id !== trainer._id)
+      );
+
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="p-6 text-white">
+        Loading trainers...
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 text-white">
+
       <h2 className="text-xl font-semibold mb-4">
         Active Trainers
       </h2>
 
       <div className="overflow-x-auto border border-zinc-800 rounded-xl">
+
         <table className="w-full text-sm">
+
           <thead className="bg-zinc-900 text-zinc-300">
             <tr>
               <th className="p-3 text-left">Name</th>
               <th className="p-3 text-left">Email</th>
-              <th className="p-3 text-left">Specialty</th>
+              <th className="p-3 text-left">Role</th>
               <th className="p-3 text-left">Action</th>
             </tr>
           </thead>
 
           <tbody>
+
             {trainers.length === 0 ? (
               <tr>
                 <td
@@ -66,12 +88,20 @@ export default function AdminManageTrainers() {
             ) : (
               trainers.map((trainer) => (
                 <tr
-                  key={trainer.id}
+                  key={trainer._id}
                   className="border-t border-zinc-800"
                 >
-                  <td className="p-3">{trainer.name}</td>
-                  <td className="p-3">{trainer.email}</td>
-                  <td className="p-3">{trainer.specialty}</td>
+                  <td className="p-3">
+                    {trainer.name}
+                  </td>
+
+                  <td className="p-3">
+                    {trainer.email}
+                  </td>
+
+                  <td className="p-3 capitalize">
+                    {trainer.role}
+                  </td>
 
                   <td className="p-3">
                     <button
@@ -84,6 +114,7 @@ export default function AdminManageTrainers() {
                 </tr>
               ))
             )}
+
           </tbody>
         </table>
       </div>

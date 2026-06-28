@@ -1,6 +1,6 @@
 "use client";
 
-import { getTrainerApplications } from "@/lib/actions/trainer";
+import { approveTrainer, getTrainerApplications, rejectTrainer } from "@/lib/actions/trainer";
 import React, { useEffect, useState } from "react";
 
 export default function AdminTrainerApplication() {
@@ -43,10 +43,7 @@ export default function AdminTrainerApplication() {
   // Approve handler
   const handleApprove = async () => {
     try {
-      console.log("Approved:", selected);
-
-      // TODO:
-      // await approveTrainer(selected._id)
+      approveTrainer(selected._id);
 
     } catch (error) {
       console.log(error);
@@ -58,10 +55,9 @@ export default function AdminTrainerApplication() {
   // Reject handler
   const handleReject = async () => {
     try {
-      console.log("Rejected:", selected);
+    
 
-      // TODO:
-      // await rejectTrainer(selected._id)
+      rejectTrainer(selected._id);
 
     } catch (error) {
       console.log(error);

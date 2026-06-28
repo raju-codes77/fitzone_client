@@ -14,3 +14,76 @@ export const getAllNormalUsers = async () => {
     (user) => user.role === "user"
   );
 };
+
+//demote trainer to user
+
+export const demoteTrainer = async (id) => {
+  const res = await fetch(
+    `${baseUrl}/users/${id}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        role: "user",
+      }),
+    }
+  );
+
+  return res.json();
+};
+
+//promote user to admin
+
+export const promoteUser = async (id) => {
+  const res = await fetch(
+    `${baseUrl}/users/${id}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        role: "admin",
+      }),
+    }
+  );
+
+  return res.json();
+};
+//user block
+export const blockUser = async (id) => {
+  const res = await fetch(
+    `${baseUrl}/users/${id}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        isBlocked: true,
+      }),
+    }
+  );
+
+  return res.json();
+};
+
+//user unblock
+export const unblockUser = async (id) => {
+  const res = await fetch(
+    `${baseUrl}/users/${id}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        isBlocked: false,
+      }),
+    }
+  );
+
+  return res.json();
+};

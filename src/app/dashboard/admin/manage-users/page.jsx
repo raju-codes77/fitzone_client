@@ -1,6 +1,6 @@
 "use client";
 
-import { getUsers } from "@/lib/api/users";
+import { getUsers, promoteUser } from "@/lib/api/users";
 import { useState } from "react";
 import {
   FaUserShield,
@@ -20,42 +20,13 @@ export default function AdminManageUsers() {
   // Block / Unblock
   const handleBlockToggle = (id) => {
 
-    const updatedUsers = users.map((user) => {
+  
 
-      if (user.id === id) {
-
-        return {
-          ...user,
-          status:
-            user.status === "active"
-              ? "blocked"
-              : "active",
-        };
-      }
-
-      return user;
-    });
-
-    setUsers(updatedUsers);
   };
 
   // Make Admin
   const handleMakeAdmin = (id) => {
-
-    const updatedUsers = users.map((user) => {
-
-      if (user.id === id) {
-
-        return {
-          ...user,
-          role: "admin",
-        };
-      }
-
-      return user;
-    });
-
-    setUsers(updatedUsers);
+    promoteUser(id);
   };
 
   return (
