@@ -56,6 +56,7 @@ export async function POST(request) {
         userEmail: user.email,
         title: title.trim(),
         productId: productId.trim(),
+        paymentDate:new Date().toISOString(),
       },
       mode: 'payment',
       success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,

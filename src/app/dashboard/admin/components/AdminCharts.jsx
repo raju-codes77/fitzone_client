@@ -2,11 +2,13 @@
 'use client';
 
 import { getClasses } from '@/lib/api/classes';
+import { getPaymentData } from '@/lib/api/payment';
 import { getUsers } from '@/lib/api/users';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, PieChart, Pie, Cell } from 'recharts';
 const allClasses=await getClasses();
 const users=await getUsers();
 const allUsers=users.filter(user=>user.role==="user");
+const allPayments=await getPaymentData();
 const areaData = [
   { name: 'Jan', bookings: 120, users: 400 },
   { name: 'Feb', bookings: 210, users: 550 },
@@ -19,7 +21,7 @@ const areaData = [
 const pieData = [
   { name: 'Active Users', value: allUsers.length, color: '#22d3ee' },      // cyan-400
   { name: 'Active Classes', value: allClasses.length, color: '#a855f7' },     // purple-500
-  { name: 'Filled Bookings', value: 532, color: '#34d399' },   // emerald-400
+  { name: 'Filled Bookings', value: allPayments.length, color: '#34d399' },   // emerald-400
 ];
 
 

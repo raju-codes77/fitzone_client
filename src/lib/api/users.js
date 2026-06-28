@@ -7,4 +7,10 @@ return res.json();
 
 }
 
-export const allUsers=getUsers.filter(user=>user.role==="user");
+export const getAllNormalUsers = async () => {
+  const users = await getUsers();
+
+  return users.filter(
+    (user) => user.role === "user"
+  );
+};

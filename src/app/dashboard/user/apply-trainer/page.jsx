@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import { applyTrainer, getTrainerApplications } from '@/lib/actions/trainer';
+import { useSession } from '@/lib/auth-client';
+import React, { useEffect, useState } from 'react';
 
 const UserApplyTrainer = () => {
   // Manage form submission state variables
@@ -9,8 +11,36 @@ const UserApplyTrainer = () => {
   const [applicationStatus, setApplicationStatus] = useState('Not Applied'); // 'Not Applied' | 'Pending'
   const [error, setError] = useState('');
 
+  const { data: session } = useSession();
+  // validate user applied
+   useEffect(() => {
+    const checkApplication = async () => {
+      if (!session?.user?.id) return;
+
+      try {
+        const applications = await getTrainerApplications();
+
+        // Find current user's application
+        const existingApplication = applications?.find(
+          (app) => app.userId === session.user.id
+        );
+
+        if (existingApplication) {
+          setApplicationStatus(existingApplication.status);
+
+          // Optional: set previous data
+          setExperience(existingApplication.experience);
+          setSpecialty(existingApplication.specialty);
+        }
+      } catch (err) {
+        console.log(err);
+      } 
+    };
+
+    checkApplication();
+  }, [session]);
   // Form submission handler
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     setError('');
 
@@ -25,12 +55,22 @@ const UserApplyTrainer = () => {
       return;
     }
 
+    const applicationData={
+      experience,
+      specialty,
+      userId:session?.user?.id,
+      userEmail:session?.user?.email,
+      userName:session?.user?.name,
+    };
+    const data=await applyTrainer(applicationData);
+
     // Set status to pending on successful submit
     setApplicationStatus('Pending');
     
     // In production, you would dispatch your API call here:
     // await fetch('/api/trainers/apply', { method: 'POST', body: JSON.stringify({ experience, specialty }) });
   };
+  
 
   return (
     <div className="p-6 max-w-2xl mx-auto min-h-screen bg-slate-950 text-slate-100">
