@@ -17,3 +17,9 @@ export const deleteForum= async (id) => {
   console.log("Delete response:", data);
   return data;
 };
+
+// Get single forum by id
+export const getForumById = async (id) => {
+  const res = await fetch(`${baseUrl}/forums/${id}`);
+  return res.json();
+};
