@@ -4,7 +4,16 @@ export const getClasses = async () => {
   const res = await fetch(`${baseUrl}/classes`);
   return res.json();
 };
+//pagination
+export const paginationClasses=async(page)=>{
+  if(!page){
+    page=1;
+  }
 
+const res=await fetch(`${baseUrl}/pagination/classes?page=${page}`);
+return res.json();
+
+}
 // Approve class
 export const approveClass = async (id) => {
   const res = await fetch(`${baseUrl}/classes/approve/${id}`, {

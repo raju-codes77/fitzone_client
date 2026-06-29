@@ -74,7 +74,7 @@ const FeaturedClasses = () => {
                                                  </div>
 
                                                  {/* Action Button */}
-                                                 <Link href={`/classes/${classes._id}`} className="w-full text-center py-2 rounded-lg bg-lime-600 hover:bg-indigo-500 text-white font-semibold text-xs tracking-wide transition-colors cursor-pointer">
+                                                 <Link href={`/classes/${classes._id}`} className="w-full text-center py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs tracking-wide shadow-md transition-colors cursor-pointer">
                                                         View Details
                                                  </Link>
                                           </div>

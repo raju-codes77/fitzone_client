@@ -1,6 +1,6 @@
 "use client"
 import ViewDetails from '@/components/ViewDetails';
-import { getClasses } from '@/lib/api/classes';
+import { getClasses, paginationClasses } from '@/lib/api/classes';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 

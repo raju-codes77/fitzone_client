@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteForum, getForums } from "@/lib/api/forums";
+import { deleteForum, getForums, manageForums } from "@/lib/api/forums";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -13,7 +13,7 @@ const AdminForumPostManage = () => {
 
     const fetchForums = async () => {
 
-      const data = await getForums();
+      const data = await manageForums();
 
       setPosts(data || []);
 

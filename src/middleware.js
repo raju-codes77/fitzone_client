@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import toast from "react-hot-toast";
 
 export function middleware(request) {
   const session = request.cookies.get(
@@ -7,7 +8,9 @@ export function middleware(request) {
 
   if (!session) {
     return NextResponse.redirect(
+     
       new URL("/login", request.url)
+
     );
   }
 
@@ -19,5 +22,6 @@ export const config = {
     "/profile",
     "/dashboard/user",
     "/classes/:id",
+    "/community/:id",
   ],
 };

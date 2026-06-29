@@ -1,13 +1,18 @@
 "use client";
 
 import { createClass } from '@/lib/actions/classes';
+import { useSession } from '@/lib/auth-client';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 
 const AddClassPage = () => {
+  const { data: session } = useSession();
+  const user = session?.user;
+  
   // Controlled form state attributes
   const [className, setClassName] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
   const [category, setCategory] = useState('');
   const [difficulty, setDifficulty] = useState('');
   const [duration, setDuration] = useState('');
@@ -23,6 +28,40 @@ const AddClassPage = () => {
 
   const availableDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
+  // ImgBB Upload Handler
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      // Accessing the API Key provided in the instructions
+      const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY || 'a08095dcf8dfc4a400044b65d5c01830';
+      
+      const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setImageUrl(result.data.url);
+        toast.success("Image uploaded successfully!");
+      } else {
+        toast.error("Failed to upload image to ImgBB.");
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("An error occurred during image upload.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const toggleDaySelection = (day) => {
     if (selectedDays.includes(day)) {
       setSelectedDays(selectedDays.filter(d => d !== day));
@@ -35,6 +74,11 @@ const AddClassPage = () => {
     e.preventDefault();
     setValidationError('');
 
+    if (isUploading) {
+      setValidationError('Please wait for the image upload to complete.');
+      return;
+    }
+
     // Field verification boundaries
     if (!className || !category || !difficulty || !duration || !price || !classTime || selectedDays.length === 0) {
       setValidationError('Please complete all fields and select at least one scheduling day.');
@@ -44,24 +88,22 @@ const AddClassPage = () => {
     // Consolidated payload object mapped with forced platform moderation rules
     const newClassPayload = {
       className,
-      imageUrl: imageUrl || 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd', // Default placeholder if blank
+      imageUrl: imageUrl || 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd', // Default fallback if blank
       category,
       difficultyLevel: difficulty,
       duration: `${duration} mins`,
       price: parseFloat(price),
       description,
       schedule: `${selectedDays.join(', ')} @ ${classTime}`,
-      status: "Pending" // Note requirement: Secured platform rule default
-    };
+      status: "Pending",
+      uploadedBy: user?.email,
+    }
 
-    const res=await createClass(newClassPayload);
-    if(res.insertedID){
-       toast.success("Class added Successfully!")
+    const res = await createClass(newClassPayload);
+    if(res?.insertedID){
+       toast.success("Class added Successfully!");
     }
     setFormSubmitted(true);
-
-    // In dynamic scenarios, wire up your async database operations here:
-    // await fetch('/api/classes/create', { method: 'POST', body: JSON.stringify(newClassPayload) });
   };
 
   return (
@@ -97,7 +139,7 @@ const AddClassPage = () => {
             </div>
           )}
 
-          {/* Grid Layout Row 1: Class Name & Cover Art Link */}
+          {/* Grid Layout Row 1: Class Name & Cover Art File Picker */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Class Name</label>
@@ -107,11 +149,22 @@ const AddClassPage = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Cover Image URL</label>
-              <input 
-                type="url" placeholder="https://example.com/cover.jpg" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 transition-colors"
-              />
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+                Cover Image {imageUrl && '✓'}
+              </label>
+              <div className="relative">
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-1.5 text-sm text-slate-400 file:mr-4 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-indigo-950 file:text-indigo-400 hover:file:bg-indigo-900 file:cursor-pointer focus:outline-none focus:border-indigo-500 transition-colors"
+                />
+                {isUploading && (
+                  <span className="absolute right-3 top-2.5 text-xs text-indigo-400 animate-pulse">
+                    Uploading...
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 
@@ -207,9 +260,10 @@ const AddClassPage = () => {
           <div className="pt-2">
             <button
               type="submit"
-              className="w-full inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500 active:bg-indigo-700 shadow-lg hover:shadow-indigo-500/10 transition-all cursor-pointer focus:outline-none"
+              disabled={isUploading}
+              className={`w-full inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500 active:bg-indigo-700 shadow-lg hover:shadow-indigo-500/10 transition-all cursor-pointer focus:outline-none ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              Deploy Class Matrix
+              {isUploading ? 'Uploading Image...' : 'Deploy Class Matrix'}
             </button>
           </div>
 

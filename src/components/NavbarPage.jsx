@@ -18,7 +18,7 @@ const NavbarPage = () => {
 
   if (pathname.includes("dashboard")) return null;
 
-  // window.location.href = full page reload → clears session cache completely
+ 
   const handleLogout = async () => {
     try {
       await authClient.signOut();

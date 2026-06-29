@@ -1,10 +1,12 @@
 "use client";
 
-import { createForums } from '@/lib/actions/forums';
+import { useSession } from '@/lib/auth-client';
 import React, { useState } from 'react';
 import toast from "react-hot-toast";
 
 const CreateForumPostPage = () => {
+  const { data: session } = useSession();
+  const user = session?.user;
   // Controlled form input states
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -63,6 +65,8 @@ const CreateForumPostPage = () => {
         description,
         imageUrl: permanentImageUrl,
         timestamp: new Date().toISOString(),
+        userId: session?.user?.id,
+        userEmail: session?.user?.email,
       };
       const baseUrl=process.env.NEXT_PUBLIC_BASE_URL;
       const response = await fetch(`${baseUrl}/forums`, {

@@ -1,13 +1,49 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useSession } from '@/lib/auth-client';
+import { getPaymentData } from '@/lib/api/payment';
+import { getClasses } from '@/lib/api/classes';
 
 
 const TrainerDashboard = () => {
   const { data: session, status } = useSession();
+  const [classes, setClasses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [payments, setPayments] = useState([]);
+   useEffect(() => {
+      const loadClasses = async () => {
+        try {
+          setLoading(true);
+  
+          const data = await getClasses();
+          const allPayments=await getPaymentData();
+           setPayments(allPayments);
+  
+          // Ensure array
+          let classData = [];
+  
+          if (Array.isArray(data)) {
+            classData = data;
+          } else if (Array.isArray(data?.data)) {
+            classData = data.data;
+          }
+  
+          setClasses(classData);
+         
+        } catch (error) {
+          console.error("Failed to load classes:", error);
+          setClasses([]);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      loadClasses();
+    }, []);
 
+     const filterClasses = classes.filter(cls => cls.uploadedBy === session?.user?.email);
   // Handle the loading state while the session is fetching
   if (status === 'loading') {
     return (
@@ -25,10 +61,11 @@ const TrainerDashboard = () => {
     role: "Trainer"
   };
 
+  
   // Metrics related specifically to this trainer's creation/enrollment history
   const stats = {
-    totalClassesCreated: 8,
-    totalStudentsEnrolled: 142
+    totalClassesCreated: filterClasses.length,
+    totalStudentsEnrolled: payments.length
   };
 
   return (
