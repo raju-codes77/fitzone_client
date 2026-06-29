@@ -1,6 +1,7 @@
 "use client";
 
 import { useSession } from "@/lib/auth-client";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FaThumbsUp, FaThumbsDown, FaReply, FaEdit, FaTrash } from "react-icons/fa";
@@ -189,7 +190,7 @@ export default function ViewForumDetails({ forum }) {
       className={`w-${size} h-${size} rounded-full bg-cyan-500/20 text-cyan-400 font-bold flex items-center justify-center text-sm overflow-hidden flex-shrink-0`}
     >
       {image ? (
-        <img src={image} alt={name} className="w-full h-full object-cover" />
+        <Image src={image} alt={name} className="w-full h-full object-cover" height={size} width={size} />
       ) : (
         name?.charAt(0)?.toUpperCase()
       )}
@@ -202,11 +203,15 @@ export default function ViewForumDetails({ forum }) {
       {/* Image */}
       {forum.imageUrl && (
         <div className="w-full rounded-2xl overflow-hidden mb-6 border border-zinc-800">
-          <img
-            src={forum.imageUrl}
-            alt={forum.title}
-            className="w-full h-72 object-cover"
-          />
+          <div className="relative w-full h-72">
+            <Image
+              src={forum.imageUrl}
+              alt={forum.title}
+              fill
+              className="object-cover"
+              sizes="100vw"
+            />
+          </div>
         </div>
       )}
 
