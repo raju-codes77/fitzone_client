@@ -45,12 +45,15 @@ export default function LoginPage() {
       setLoading(false);
       return;
     }else{
-      const{ data:token} = await authClient.getToken();
+      const{ data:token} = await authClient.token();
 
-      console.log("JWT TOKEN:", token);
+      
+  
+      console.log("JWT TOKEN:", token.token);
+      localStorage.setItem("token", token.token)
 
         toast.success("Login successful!");
-        router.push("/")
+         router.push("/")
     }
 
    

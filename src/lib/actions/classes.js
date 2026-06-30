@@ -1,15 +1,20 @@
-'use server'
 
 
-const baseUrl=process.env.NEXT_PUBLIC_BASE_URL;
-export const  createClass=async(newClass)=>{
-       const res=await fetch(`${baseUrl}/classes`,{
+import { authClient } from "../auth-client";
 
-              method:'POST',
-              headers:{
-                     'Content-Type':'application/json',
+
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+export const createClass = async (newClass) => {
+       const token=localStorage.getItem("token");
+
+       const res = await fetch(`${baseUrl}/classes`, {
+
+              method: 'POST',
+              headers: {
+                     'Content-Type': 'application/json',
+                     authorization: `Bearer ${token}`
               },
-              body:JSON.stringify(newClass)
+              body: JSON.stringify(newClass)
 
        })
        return await res.json();

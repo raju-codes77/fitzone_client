@@ -7,7 +7,7 @@ import { auth } from '@/lib/auth'
 export async function POST(request) {
   try {
     const headersList = await headers()
-    const origin = headersList.get('origin') ?? process.env.NEXT_PUBLIC_APP_URL
+    const origin = headersList.get('origin') ?? process.env.NEXT_PUBLIC_BASE_URL
 
     const userSession = await auth.api.getSession({
       headers: headersList,

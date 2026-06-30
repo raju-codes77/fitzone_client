@@ -7,35 +7,41 @@ const client = new MongoClient(process.env.MONGO_DB_URI);
 const db = client.db("fitzone");
 
 export const auth = betterAuth({
-       emailAndPassword: {
-              enabled: true,
-       }, socialProviders: {
-        google: { 
-            clientId: process.env.GOOGLE_CLIENT_ID , 
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET  , 
-        }, 
+  secret: process.env.BETTER_AUTH_SECRET,
+  baseURL: process.env.BETTER_AUTH_URL,
+
+  // Allow requests from your frontend domain
+
+
+  emailAndPassword: {
+    enabled: true,
+  },
+
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     },
-       database: mongodbAdapter(db, {
-              // Optional: if you don't provide a client, database transactions won't be enabled.
-              client
-       }), user: {
+  },
+
+  database: mongodbAdapter(db, { client }),
+
+  user: {
     additionalFields: {
-      role: {
-        defaultValue: "user"
-      },
-      isBlocked: {
-        defaultValue: false
-      }
+      role: { defaultValue: "user" },
+      isBlocked: { defaultValue: false },
     },
   },
-  session:{
-    cookieCache:{
-      enabled:true,
-      strategy:"jwt",
-      maxAge:60*24*30,
-    }
+
+  session: {
+    cookieCache: {
+      enabled: true,
+      strategy: "jwt",
+      maxAge: 60 * 60 * 24 * 30, // 30 days in seconds (not minutes!)
+    },
   },
-  plugins: [
-    jwt()
-  ]
+
+  
+
+  plugins: [jwt()],
 });

@@ -100,8 +100,9 @@ export default function RegisterPage() {
                      return;
               }
               else {
+                     await authClient.signOut();
                      toast.success("Account created successfully!");
-                     router.push("/login")
+                     window.location.replace("/login")
               }
 
 
