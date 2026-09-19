@@ -29,7 +29,7 @@ export default function ViewForumDetails({ forum }) {
       try {
         const res = await fetch(`${baseUrl}/forums/${forum._id}/comments`);
         const data = await res.json();
-        setComments(data || []);
+        setComments(Array.isArray(data) ? data : []);
       } catch {
         setComments([]);
       } finally {
