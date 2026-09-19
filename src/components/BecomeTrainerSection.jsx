@@ -33,7 +33,7 @@ export default function BecomeTrainerSection() {
               </div>
 
               <Link 
-                href="/apply/trainer"
+                href="/dashboard/user/apply-trainer"
                 className="inline-flex items-center justify-center gap-2 w-full sm:w-auto bg-gradient-to-r from-lime-400 to-lime-300 hover:from-lime-300 hover:to-lime-200 text-zinc-950 font-bold px-6 py-3.5 rounded-2xl transition-all duration-300 shadow-xl shadow-lime-500/10 active:scale-[0.98]"
               >
                 Apply Credentials

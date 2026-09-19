@@ -3,7 +3,13 @@ import { authClient } from "@/lib/auth-client";
 const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000";
 
 const getHeaders = async () => {
-  const tokenData = await authClient.token();
+  let tokenData = null;
+  try {
+    tokenData = await authClient.token();
+  } catch (error) {
+    // Silently ignore auth token failures for unauthenticated users
+  }
+  
   const token = tokenData?.data?.token || (typeof window !== 'undefined' ? localStorage.getItem("token") : null);
   
   return {
