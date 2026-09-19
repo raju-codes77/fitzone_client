@@ -33,6 +33,7 @@ const NavbarPage = () => {
     { name: "Home", href: "/" },
     { name: "All Classes", href: "/classes" },
     { name: "Community", href: "/community" },
+    { name: "✨ AI", href: "/ai" },
   ];
 
   return (
@@ -43,7 +44,7 @@ const NavbarPage = () => {
           {/* Logo */}
           <NextLink href="/" className="group flex items-center gap-3">
             <div className="relative h-12 w-12 overflow-hidden rounded-2xl border border-lime-500/30 bg-white/5 p-1 transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-lime-500/20">
-              <Image src="/logo.png" alt="FitZone Logo" fill priority className="object-contain p-1" />
+              <Image src="/logo.png" alt="FitZone Logo" fill sizes="(max-width: 768px) 100vw, 33vw" priority className="object-contain p-1" />
             </div>
             <div>
               <h1 className="text-xl font-extrabold tracking-tight text-white">FitZone</h1>
@@ -86,7 +87,7 @@ const NavbarPage = () => {
               <>
                 <div className="flex items-center gap-3 rounded-full bg-white/5 px-3 py-2">
                   <Image
-                    src={session.user.image || "/avatar.png"}
+                    src={session.user.image || "/logo.png"}
                     alt={session.user.name || "User"}
                     width={40} height={40}
                     className="rounded-full border border-lime-400/30 object-cover"
@@ -171,7 +172,7 @@ const NavbarPage = () => {
                 <>
                   <div className="mt-3 flex items-center gap-3 rounded-xl bg-white/5 px-4 py-3">
                     <Image
-                      src={session.user.image || "/avatar.png"}
+                      src={session.user.image || "/logo.png"}
                       alt={session.user.name || "User"}
                       width={40} height={40}
                       className="rounded-full border border-lime-400/30 object-cover"

@@ -3,86 +3,98 @@ import { getClasses } from '@/lib/api/classes';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
+import { FaClock, FaFolderOpen, FaFire, FaUserTie } from 'react-icons/fa';
 
 const FeaturedClasses = () => {
-       const [filterClass, setFilterClass] = useState([]);
-       useEffect(() => {
-              const loadClasses = async () => {
-                     const allClasses = await getClasses();
-                     const filterClasses = allClasses.sort((a, b) => b.bookingCount - a.bookingCount).slice(0, 6);
-                     setFilterClass(filterClasses);
-              }
-              loadClasses();
-       }, [])
-       return (
-              <div className="p-6  bg-slate-950 text-slate-100">
-                     {/* Section Title */}
-                     <div className='flex justify-between items-center'>
-                            <div className="mb-8 text-center">
-                                   <h2 className="text-2xl font-bold text-slate-50">Featured Classes</h2>
-                                   <p className="text-sm text-lime-300 mt-1">Our most booked fitness sessions</p>
+    const [filterClass, setFilterClass] = useState([]);
+    useEffect(() => {
+        const loadClasses = async () => {
+            const allClasses = await getClasses();
+            const filterClasses = allClasses.sort((a, b) => b.bookingCount - a.bookingCount).slice(0, 6);
+            setFilterClass(filterClasses);
+        }
+        loadClasses();
+    }, [])
+    
+    return (
+        <section className="py-24 bg-black relative">
+            <div className="max-w-7xl mx-auto px-6">
+                {/* Section Title */}
+                <div className='flex flex-col md:flex-row justify-between items-center mb-12 gap-6'>
+                    <div>
+                        <h2 className="text-4xl font-extrabold text-white mb-2 tracking-tight">
+                            Featured <span className="text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-emerald-500">Classes</span>
+                        </h2>
+                        <p className="text-slate-400 text-lg">Join our most popular fitness sessions.</p>
+                    </div>
+
+                    <Link href={"/classes"} className="inline-flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 font-bold px-6 py-3 rounded-full transition-all hover:scale-105 active:scale-95">
+                        Explore All Classes &rarr;
+                    </Link>
+                </div>
+
+                {/* Grid Container */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {filterClass.map((classes) => (
+                        <div
+                            key={classes._id}
+                            className="group relative bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-2xl transition-all duration-500 hover:border-lime-500/30 hover:shadow-[0_8px_30px_rgb(132,204,22,0.15)] hover:-translate-y-2 flex flex-col"
+                        >
+                            {/* Booking Count Badge */}
+                            <div className="absolute top-4 right-4 z-20 bg-black/60 backdrop-blur-md text-lime-400 text-xs font-bold px-3 py-1.5 rounded-full border border-lime-500/20 shadow-lg flex items-center gap-1.5">
+                                <FaFire className="text-orange-500" /> {classes.bookingCount || 0} Booked
                             </div>
 
-                            <Link href={"/classes"} className="bg-lime-400 text-black font-bold px-4 py-3 rounded-xl hover:bg-lime-300 transition shadow-[0_0_25px_rgba(163,230,53,0.25)] hover:shadow-[0_0_40px_rgba(163,230,53,0.35)] hover:scale-[1.03]">View All Classes</Link>
+                            {/* Image */}
+                            <div className="relative h-56 w-full bg-slate-950 overflow-hidden">
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent z-10"></div>
+                                <Image
+                                    src={classes.imageUrl}
+                                    alt={classes.className}
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                                />
+                                <div className="absolute bottom-4 left-4 z-20">
+                                    <span className="inline-block bg-lime-500 text-black text-sm font-extrabold px-3 py-1 rounded-lg shadow-lg">
+                                        ${typeof classes.price === 'number' ? classes.price.toFixed(2) : classes.price}
+                                    </span>
+                                </div>
+                            </div>
 
-                     </div>
-                     {/* Grid Container */}
-                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {filterClass.map((classes) => (
-                                   <div
-                                          key={classes._id}
-                                          className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-lg flex flex-col group relative"
-                                   >
-                                          {/* Booking Count Badge */}
-                                          <div className="absolute top-3 right-3 z-10 bg-lime-700 text-slate-200 text-xs font-bold px-2.5 py-1 rounded-full shadow-md">
-                                                 🔥 {classes.bookingCount || 0} Booked
-                                          </div>
+                            {/* Content Details */}
+                            <div className="p-6 flex-1 flex flex-col">
+                                <h3 className="font-bold text-2xl text-white mb-2 group-hover:text-lime-400 transition-colors line-clamp-1">
+                                    {classes.className}
+                                </h3>
+                                
+                                <p className="flex items-center gap-2 text-sm text-slate-400 mb-5">
+                                    <FaUserTie className="text-slate-500" /> 
+                                    By <span className="text-slate-200 font-semibold">{classes.trainerName || "Expert Coach"}</span>
+                                </p>
 
-                                          {/* Image */}
-                                          <div className="relative h-48 w-full bg-slate-950 overflow-hidden">
-                                                 <Image
-                                                        src={classes.imageUrl}
-                                                        alt={classes.className}
-                                                        fill
-                                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                                        priority={false} // Set to true if this section is at the very top of the homepage (Above the fold)
-                                                 />
-                                          </div>
+                                <div className="flex items-center gap-4 text-xs font-medium text-slate-400 mb-8 bg-white/5 p-3 rounded-xl border border-white/5">
+                                    <div className="flex items-center gap-1.5">
+                                        <FaClock className="text-lime-500" /> {classes.duration}
+                                    </div>
+                                    <div className="w-px h-4 bg-slate-700"></div>
+                                    <div className="flex items-center gap-1.5 line-clamp-1">
+                                        <FaFolderOpen className="text-lime-500" /> {classes.category}
+                                    </div>
+                                </div>
 
-                                          {/* Content Details */}
-                                          <div className="p-5 flex-1 flex flex-col justify-between">
-                                                 <div>
-                                                        <div className="flex justify-between items-start gap-2 mb-2">
-                                                               <h3 className="font-bold text-lg text-slate-50 group-hover:text-indigo-400 transition-colors">
-                                                                      {classes.className}
-                                                               </h3>
-                                                               <span className="text-emerald-400 font-bold text-lg">
-                                                                      ${typeof classes.price === 'number' ? classes.price.toFixed(2) : classes.price}
-                                                               </span>
-                                                        </div>
-
-                                                        <p className="text-xs text-slate-400 mb-2">
-                                                               Trainer: <span className="text-slate-200 font-medium">{classes.trainerName || "Expert Coach"}</span>
-                                                        </p>
-
-                                                        <div className="flex items-center gap-2 text-xs text-slate-500 mb-4">
-                                                               <span>⏱️ {classes.duration}</span>
-                                                               <span>•</span>
-                                                               <span>📂 {classes.category}</span>
-                                                        </div>
-                                                 </div>
-
-                                                 {/* Action Button */}
-                                                 <Link href={`/classes/${classes._id}`} className="w-full text-center py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs tracking-wide shadow-md transition-colors cursor-pointer">
-                                                        View Details
-                                                 </Link>
-                                          </div>
-                                   </div>
-                            ))}
-                     </div>
-              </div>
-       );
+                                <div className="mt-auto pt-2">
+                                    <Link href={`/classes/${classes._id}`} className="flex items-center justify-center w-full py-3.5 rounded-xl bg-gradient-to-r from-lime-500 to-emerald-500 hover:from-lime-400 hover:to-emerald-400 text-black font-bold text-sm transition-all shadow-[0_0_20px_rgba(132,204,22,0.2)] hover:shadow-[0_0_30px_rgba(132,204,22,0.4)]">
+                                        View Details
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
 };
 
 export default FeaturedClasses;

@@ -48,6 +48,7 @@ export default function BecomeTrainerSection() {
                 src="/trainer.png"
                 alt="FitZone Coach Profile"
                 fill
+                sizes="(max-width: 768px) 100vw, 33vw"
                 className="object-contain p-2 transition-transform duration-500 group-hover:scale-105"
                 priority
               />
@@ -92,6 +93,7 @@ export default function BecomeTrainerSection() {
                 src="/community.png"
                 alt="FitZone Ecosystem Dashboard"
                 fill
+                sizes="(max-width: 768px) 100vw, 33vw"
                 className="object-contain p-2 transition-transform duration-500 group-hover:scale-105"
                 priority
               />

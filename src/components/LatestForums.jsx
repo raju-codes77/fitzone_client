@@ -3,6 +3,7 @@ import { getForums, manageForums } from '@/lib/api/forums';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
+import { FaCalendarAlt, FaComments } from 'react-icons/fa';
 
 const LatestForums = () => {
   const [filterForums, setFilterForums] = useState([]);
@@ -14,76 +15,77 @@ const LatestForums = () => {
     }
     loadForums();
   }, [])
+  
   return (
-    <div className="p-6  bg-slate-950 text-slate-100">
-
-      {/* Section Header */}
-      <h2 className="text-3xl font-extrabold text-slate-50 tracking-tight">
-        Latest Forum Posts
-      </h2>
-      <div className="mb-10 text-center">
-
-        <p className="text-sm text-lime-400 mt-2 max-w-md mx-auto">
-          Stay updated with the newest trends, tips, and discussions from our fitness community.
-        </p>
-      </div>
-
-      {/* Grid Container */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {filterForums.map((post) => (
-          <div
-            key={post._id}
-            className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-lg flex flex-col hover:border-slate-700 transition-all group"
-          >
-            {/* Next.js Optimized Image Container */}
-            <div className="relative h-44 w-full bg-slate-950 overflow-hidden">
-              <Image
-                src={post.imageUrl}
-                alt={post.title}
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
-              />
+    <section className="py-24 bg-black relative">
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
+            <div>
+                <h2 className="text-4xl font-extrabold text-white mb-2 tracking-tight">
+                    Latest <span className="text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-emerald-500">Discussions</span>
+                </h2>
+                <p className="text-slate-400 text-lg">Stay updated with community trends and tips.</p>
             </div>
+            <Link href={"/community"} className="inline-flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 font-bold px-6 py-3 rounded-full transition-all hover:scale-105 active:scale-95">
+                Visit Community &rarr;
+            </Link>
+        </div>
 
-            {/* Post Content */}
-            <div className="p-5 flex-1 flex flex-col justify-between">
-              <div>
+        {/* Grid Container */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {filterForums.map((post) => (
+            <Link
+              href={`/community/${post._id}`}
+              key={post._id}
+              className="group relative bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-xl transition-all duration-300 hover:border-lime-500/30 hover:shadow-[0_8px_20px_rgb(132,204,22,0.1)] hover:-translate-y-1 flex flex-col"
+            >
+              {/* Next.js Optimized Image Container */}
+              <div className="relative h-40 w-full bg-slate-950 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 to-transparent z-10"></div>
+                <Image
+                  src={post.imageUrl}
+                  alt={post.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                  className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                />
+                
                 {/* Readable Timestamp */}
-                <span className="text-[11px] text-indigo-400 font-semibold tracking-wider uppercase">
+                <div className="absolute bottom-3 left-3 z-20 flex items-center gap-1.5 text-xs font-semibold text-lime-400 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-lg border border-lime-500/20">
+                  <FaCalendarAlt />
                   {new Date(post.timestamp).toLocaleDateString('en-US', {
                     month: 'short',
                     day: 'numeric',
                     year: 'numeric'
                   })}
-                </span>
+                </div>
+              </div>
 
-                <h3 className="font-bold text-base text-slate-50 leading-snug mt-1 mb-2 line-clamp-2 group-hover:text-indigo-400 transition-colors">
+              {/* Post Content */}
+              <div className="p-5 flex-1 flex flex-col">
+                <h3 className="font-bold text-lg text-white leading-snug mb-2 line-clamp-2 group-hover:text-lime-400 transition-colors">
                   {post.title}
                 </h3>
 
-                <p className="text-xs text-slate-400 line-clamp-3 leading-relaxed">
+                <p className="text-sm text-slate-400 line-clamp-3 leading-relaxed mb-4">
                   {post.description && post.description !== 'none'
                     ? post.description
                     : 'Read this community discussion to share perspectives and tips with fellow fitness enthusiasts.'}
                 </p>
-              </div>
 
-              {/* Details Action Button */}
-              <div className="mt-5 pt-3 border-t border-slate-800/60">
-                <Link
-                  href={`/community/${post._id}`}
-                  className="block w-full text-center py-2 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-medium text-slate-300 transition-colors cursor-pointer"
-                >
-                  Read Discussion
-                </Link>
+                <div className="mt-auto flex items-center justify-between text-xs text-slate-500 font-medium">
+                  <span className="flex items-center gap-1.5 text-slate-300 group-hover:text-lime-400 transition-colors">
+                    Read More &rarr;
+                  </span>
+                  <FaComments className="text-slate-600 group-hover:text-lime-500/50 transition-colors" />
+                </div>
               </div>
-            </div>
-          </div>
-        ))}
+            </Link>
+          ))}
+        </div>
       </div>
-
-    </div>
+    </section>
   );
 };
 

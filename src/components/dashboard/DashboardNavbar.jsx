@@ -26,23 +26,23 @@ export default async function DashboardNavbar() {
       </div>
 
       {/* Right Side */}
-      <Link
-        href="/"
-        className="
-          flex items-center gap-2
-          rounded-xl border border-zinc-700
-          bg-zinc-900 px-4 py-2
-          text-sm font-medium text-zinc-300
-          transition-all duration-200
-
-          hover:border-cyan-500/40
-          hover:bg-zinc-800
-          hover:text-cyan-400
-        "
-      >
-        <FaArrowLeft />
-        Back to Site
-      </Link>
+      <div className="flex items-center gap-4">
+        {user?.role === 'user' && (
+          <Link
+            href="/dashboard/ai"
+            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 px-4 py-2 text-sm font-bold text-emerald-400 transition-all duration-200 hover:from-emerald-500/30 hover:to-teal-500/30 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+          >
+            ✨ FitZone AI
+          </Link>
+        )}
+        <Link
+          href="/"
+          className="flex items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-300 transition-all duration-200 hover:border-cyan-500/40 hover:bg-zinc-800 hover:text-cyan-400"
+        >
+          <FaArrowLeft />
+          Back to Site
+        </Link>
+      </div>
     </div>
   );
 }

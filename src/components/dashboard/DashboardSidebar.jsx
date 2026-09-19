@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 
 import {
   FaHome,
@@ -13,6 +14,11 @@ import {
   FaShieldAlt,
   FaCreditCard,
   FaFlag,
+  FaDumbbell,
+  FaRobot,
+  FaChevronDown,
+  FaChevronUp,
+  FaBolt,
 } from "react-icons/fa";
 import { Button, Drawer } from "@heroui/react";
 import { Bars } from "@gravity-ui/icons";
@@ -78,6 +84,7 @@ function NavLink({ item }) {
 
 export default function DashboardSidebar({ role, name }) {
   const navItems = dashboardItems[role] || [];
+  const [isAIOpen, setIsAIOpen] = useState(false);
 
   return (
     <Drawer>
@@ -107,6 +114,32 @@ export default function DashboardSidebar({ role, name }) {
           {navItems.map((item) => (
             <NavLink key={item.label} item={item} />
           ))}
+
+          {role === 'user' && (
+            <div className="mt-2">
+              <button 
+                onClick={() => setIsAIOpen(!isAIOpen)}
+                className="w-full group flex items-center justify-between rounded-xl px-4 py-3 text-sm font-bold text-emerald-400 hover:bg-emerald-950/30 transition-all border border-transparent hover:border-emerald-900/50"
+              >
+                <div className="flex items-center gap-3">
+                  <FaBolt className="text-lg" /> ✨ AI Fitness
+                </div>
+                {isAIOpen ? <FaChevronUp className="text-xs opacity-70" /> : <FaChevronDown className="text-xs opacity-70" />}
+              </button>
+              
+              {isAIOpen && (
+                <div className="flex flex-col gap-1 pl-11 pr-2 mt-1">
+                  <Link href="/ai" className="py-2 text-xs font-medium text-slate-400 hover:text-emerald-400 transition-colors">AI Overview</Link>
+                  <Link href="/ai/workout" className="py-2 text-xs font-medium text-slate-400 hover:text-emerald-400 transition-colors">Workout Planner</Link>
+                  <Link href="/ai/nutrition" className="py-2 text-xs font-medium text-slate-400 hover:text-emerald-400 transition-colors">Nutrition Planner</Link>
+                  <Link href="/ai/meal-planner" className="py-2 text-xs font-medium text-slate-400 hover:text-emerald-400 transition-colors">Meal Planner</Link>
+                  <Link href="/ai/coach" className="py-2 text-xs font-medium text-slate-400 hover:text-emerald-400 transition-colors flex items-center justify-between">
+                    AI Coach <span className="text-[9px] bg-amber-500/20 text-amber-500 px-1.5 py-0.5 rounded border border-amber-500/20">Premium</span>
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* User Info */}
@@ -139,6 +172,32 @@ export default function DashboardSidebar({ role, name }) {
                 {navItems.map((item) => (
                   <NavLink key={item.label} item={item} />
                 ))}
+
+                {role === 'user' && (
+                  <div className="mt-2">
+                    <button 
+                      onClick={() => setIsAIOpen(!isAIOpen)}
+                      className="w-full group flex items-center justify-between rounded-xl px-4 py-3 text-sm font-bold text-emerald-400 hover:bg-emerald-950/30 transition-all border border-transparent hover:border-emerald-900/50"
+                    >
+                      <div className="flex items-center gap-3">
+                        <FaBolt className="text-lg" /> ✨ AI Fitness
+                      </div>
+                      {isAIOpen ? <FaChevronUp className="text-xs opacity-70" /> : <FaChevronDown className="text-xs opacity-70" />}
+                    </button>
+                    
+                    {isAIOpen && (
+                      <div className="flex flex-col gap-1 pl-11 pr-2 mt-1">
+                        <Link href="/ai" className="py-2 text-xs font-medium text-slate-400 hover:text-emerald-400 transition-colors">AI Overview</Link>
+                        <Link href="/ai/workout" className="py-2 text-xs font-medium text-slate-400 hover:text-emerald-400 transition-colors">Workout Planner</Link>
+                        <Link href="/ai/nutrition" className="py-2 text-xs font-medium text-slate-400 hover:text-emerald-400 transition-colors">Nutrition Planner</Link>
+                        <Link href="/ai/meal-planner" className="py-2 text-xs font-medium text-slate-400 hover:text-emerald-400 transition-colors">Meal Planner</Link>
+                        <Link href="/ai/coach" className="py-2 text-xs font-medium text-slate-400 hover:text-emerald-400 transition-colors flex items-center justify-between">
+                          AI Coach <span className="text-[9px] bg-amber-500/20 text-amber-500 px-1.5 py-0.5 rounded border border-amber-500/20">Premium</span>
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                )}
               </nav>
             </Drawer.Body>
 
