@@ -2,6 +2,19 @@ import { authClient } from "@/lib/auth-client";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000";
 
+const handleResponse = async (response, defaultMessage) => {
+  if (!response.ok) {
+    const contentType = response.headers.get("content-type") || "";
+    if (contentType.includes("application/json")) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.message || defaultMessage);
+    }
+    const text = await response.text().catch(() => "");
+    throw new Error(`${defaultMessage}: ${response.status} ${text.slice(0, 200)}`);
+  }
+  return response.json();
+};
+
 const getHeaders = async () => {
   let tokenData = null;
   try {
@@ -10,7 +23,7 @@ const getHeaders = async () => {
     // Silently ignore auth token failures for unauthenticated users
   }
   
-  const token = tokenData?.data?.token || (typeof window !== 'undefined' ? localStorage.getItem("token") : null);
+  const token = tokenData?.data?.token;
   
   return {
     "Content-Type": "application/json",
@@ -24,8 +37,7 @@ export const getAIDashboardSummary = async () => {
     method: "GET",
     headers,
   });
-  if (!response.ok) throw new Error("Failed to fetch AI dashboard summary");
-  return response.json();
+  return handleResponse(response, "Failed to fetch AI dashboard summary");
 };
 
 export const getAIHistory = async (type = "all", page = 1, limit = 10) => {
@@ -34,8 +46,7 @@ export const getAIHistory = async (type = "all", page = 1, limit = 10) => {
     method: "GET",
     headers,
   });
-  if (!response.ok) throw new Error("Failed to fetch AI history");
-  return response.json();
+  return handleResponse(response, "Failed to fetch AI history");
 };
 
 export const getAIPlan = async (id) => {
@@ -44,8 +55,7 @@ export const getAIPlan = async (id) => {
     method: "GET",
     headers,
   });
-  if (!response.ok) throw new Error("Failed to fetch AI plan");
-  return response.json();
+  return handleResponse(response, "Failed to fetch AI plan");
 };
 
 export const archiveAIPlan = async (id) => {
@@ -54,8 +64,7 @@ export const archiveAIPlan = async (id) => {
     method: "PATCH",
     headers,
   });
-  if (!response.ok) throw new Error("Failed to archive AI plan");
-  return response.json();
+  return handleResponse(response, "Failed to archive AI plan");
 };
 
 export const sendChatMessage = async (message, conversationId = null, history = []) => {
@@ -65,11 +74,7 @@ export const sendChatMessage = async (message, conversationId = null, history = 
     headers,
     body: JSON.stringify({ message, conversationId, history }),
   });
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || "Failed to send chat message");
-  }
-  return response.json();
+  return handleResponse(response, "Failed to send chat message");
 };
 
 export const getChatHistory = async () => {
@@ -78,8 +83,7 @@ export const getChatHistory = async () => {
     method: "GET",
     headers,
   });
-  if (!response.ok) throw new Error("Failed to fetch chat history");
-  return response.json();
+  return handleResponse(response, "Failed to fetch chat history");
 };
 
 export const getChatMessages = async (conversationId) => {
@@ -88,6 +92,5 @@ export const getChatMessages = async (conversationId) => {
     method: "GET",
     headers,
   });
-  if (!response.ok) throw new Error("Failed to fetch chat messages");
-  return response.json();
+  return handleResponse(response, "Failed to fetch chat messages");
 };

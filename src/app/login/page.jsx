@@ -45,15 +45,13 @@ export default function LoginPage() {
       setLoading(false);
       return;
     }else{
-      const{ data:token} = await authClient.token();
-
-      
-  
-      console.log("JWT TOKEN:", token.token);
-      localStorage.setItem("token", token.token)
-
-        toast.success("Login successful!");
-         router.push("/")
+      const { data: token } = await authClient.token();
+      // Rely solely on Better Auth cookies; do not log or store the JWT in localStorage
+      if (token?.token) {
+        // Token was successfully generated for session
+      }
+      toast.success("Login successful!");
+      router.push("/");
     }
 
    
