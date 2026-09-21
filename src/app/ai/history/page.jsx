@@ -16,7 +16,7 @@ export default function AIHistoryHub() {
     getAIHistory(filter)
       .then(data => {
         if (data.success) {
-          setHistory(data.history);
+          setHistory(data.data || data.history || []);
         }
       })
       .catch(err => console.error("Error fetching history:", err))

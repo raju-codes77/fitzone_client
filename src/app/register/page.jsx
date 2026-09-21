@@ -17,7 +17,7 @@ export default function RegisterPage() {
        const [loading, setLoading] = useState(false);
        const [imageUrl, setImageUrl] = useState("");
        const [uploading, setUploading] = useState(false);
-       const router=useRouter();
+       const router = useRouter();
 
        const {
               register,
@@ -27,39 +27,39 @@ export default function RegisterPage() {
        } = useForm();
 
        const handleImageUpload = async (e) => {
-                     const file = e.target.files?.[0];
+              const file = e.target.files?.[0];
 
-                     if (!file) return;
+              if (!file) return;
 
-                     setUploading(true);
+              setUploading(true);
 
-                     const formData = new FormData();
-                     formData.append("image", file);
+              const formData = new FormData();
+              formData.append("image", file);
 
-                     try {
-                            const res = await fetch(
-                                   `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
-                                   {
-                                          method: "POST",
-                                          body: formData,
-                                   }
-                            );
-
-                            const result = await res.json();
-
-                            if (result.success) {
-                                   setImageUrl(result.data.url);
-                                   toast.success("Image uploaded successfully!");
-                            } else {
-                                   toast.error("Image upload failed");
+              try {
+                     const res = await fetch(
+                            `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
+                            {
+                                   method: "POST",
+                                   body: formData,
                             }
-                     } catch (error) {
-                            console.error(error);
+                     );
+
+                     const result = await res.json();
+
+                     if (result.success) {
+                            setImageUrl(result.data.url);
+                            toast.success("Image uploaded successfully!");
+                     } else {
                             toast.error("Image upload failed");
-                     } finally {
-                            setUploading(false);
                      }
-              };
+              } catch (error) {
+                     console.error(error);
+                     toast.error("Image upload failed");
+              } finally {
+                     setUploading(false);
+              }
+       };
 
        const onSubmit = async (data) => {
               setError("");
@@ -83,7 +83,7 @@ export default function RegisterPage() {
                      setLoading(false);
                      return setError("Password must contain at least one lowercase letter");
               }
-              
+
 
               const result = await signUp.email({
                      email,
@@ -102,6 +102,13 @@ export default function RegisterPage() {
               else {
                      await authClient.signOut();
                      toast.success("Account created successfully!");
+                     try {
+                            await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/send-email?email=${email}&name=${name}`, {
+                                   method: "POST"
+                            });
+                     } catch (e) {
+                            console.error("Failed to send welcome email", e);
+                     }
                      window.location.replace("/login")
               }
 
