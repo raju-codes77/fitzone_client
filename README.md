@@ -139,6 +139,7 @@ Each role has its own dashboard and functionalities.
 * MongoDB
 * JWT
 * Stripe
+* Nodemailer
 
 ---
 
@@ -167,6 +168,7 @@ framer-motion
 axios
 cors
 dotenv
+nodemailer
 ```
 
 ---
